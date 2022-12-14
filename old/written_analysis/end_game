@@ -1,0 +1,24 @@
+Can the end game be brute forced? How hard would it be?
+
+Assuming
+ - you know your hand
+ - there are 4 players, each with 4 cards
+ - the deck has D cards left
+ - the table has values V[C], for each colour C
+ - there are H hints left
+
+Numbers
+ - There are 7776 table arrangements, though in practice much fewer
+ - Cards that are discardable (already played or unreachable) are all treated as equivalent, from a Seer's perspective
+ - Seers don't care about the order of their hand
+
+So, we could compile a list of end-game plays, solve with DP
+
+How to represent a game succinctly?
+How many sorted hands exist? 18480. 15 bits
+Can represent played cards with 3 * 5 bits
+Can represent discarded cards with 50 bits (but less than that entropy)
+
+When there are 5 cards left in the deck, basically the end game, 99% of the time there is at least 17 points. That means that about 70% of the deck is discardable trash, and therefore all equivalent. There are only about 14 cards that we care about, and their position in the deck and hands is more easily managed. This comes out to about 1.5k hands. Given non-independence, there's only about 100M combos of 4 hands of 4.
+
+There is an isomorphism between colours, so relabel such that V[blue] <= V[green] <= ... <= V[yellow]. Now instead of 6^5=7776 there are (6+5)C5=462, 6%. If you have 13 or more points, there are only 126 ways. 17 or more points, 53 ways. All of a sudden this looks tractable.

@@ -1,0 +1,27 @@
+different shuffles: 50! / [(2! ^ 15) * (3! ^ 5)] = 1.2e56
+
+number of distinct sorted hands: 18,480
+number of distinct unsorted hands: 371,460 (95% of 25^4). 19 bits
+A hint reasonably has 18 possibilities, so carries 4.17 bits. So 5 hints and everyone knows their hand
+
+Entropy experiment. For a Seer player, here is the distribution of number of givable hints:
+TOTAL across 3 players:
+12: 5
+13: 63
+14: 470
+15: 2103
+16: 5944
+17: 10362
+18: 11781
+19: 9074
+20: 4466
+21: 1494
+22: 275
+23: 39
+24: 3
+SMALLEST amoung 3 players:
+3: 77
+4: 5259
+5: 25041
+6: 14857
+7: 842

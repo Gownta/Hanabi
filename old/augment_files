@@ -1,0 +1,5 @@
+#!/bin/bash
+
+egrep -o "Game [0-9]* scored [0-9]*" /tmp/hanabi_logs | egrep -v "scored 25" | awk '{print $2}' > /tmp/oommk
+cat /data/users/njormrod/hanabi_seeds_2.txt >> /tmp/oommk
+cat /tmp/oommk | sort -n | uniq > /data/users/njormrod/hanabi_seeds_2.txt

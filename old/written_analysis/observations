@@ -1,0 +1,1 @@
+If I optimize for score on one-round predictions, I miss the case where current player is choosing between B1 and R4. If R4 unlocks R5, it still is the worse play, since (a) I might also have B2, or (b) I might draw B2, or (c) I might draw another playable card that further militates against B1.

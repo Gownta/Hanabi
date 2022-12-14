@@ -1,0 +1,43 @@
+cpp_unittest(
+    name = 'cards_test',
+    headers = [],
+    srcs = [
+        "CardsTest.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)
+
+cpp_unittest(
+    name = 'game_test',
+    headers = [],
+    srcs = [
+        "GameTest.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)
+
+cpp_unittest(
+    name = 'seer_test',
+    headers = [],
+    srcs = [
+        "SeerTest.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)
+
+cpp_unittest(
+    name = 'util_test',
+    headers = [],
+    srcs = [
+        "utilTest.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)

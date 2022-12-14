@@ -1,0 +1,12 @@
+"""
+cpp_unittest(
+    name = 'cards_test',
+    headers = [],
+    srcs = [
+        "CardsTest.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)
+"""

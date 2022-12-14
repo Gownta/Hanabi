@@ -1,0 +1,38 @@
+cpp_library(
+    name = 'hanabi_lib',
+    headers = [],
+    srcs = [
+        "Action.cpp",
+        "Cards.cpp",
+        "Executor.cpp",
+        "GameState.cpp",
+        "IPlayer.cpp",
+        "Printer.cpp",
+        "RealExecutor.cpp",
+        "seeds.cpp",
+        "SeerExecutor.cpp",
+        "util.cpp",
+        "XPlayer.cpp",
+    ],
+    deps = [
+        "//common/logging:logging",
+        "//common/time:chrono_flags",
+        "//folly:synchronized",
+        "//folly:scope_guard",
+        "//folly:string",
+        "//folly/container:f14_hash",
+    ],
+)
+
+cpp_binary(
+    name = 'hanabi',
+    headers = [],
+    srcs = [
+        "main.cpp",
+    ],
+    deps = [
+        ":hanabi_lib",
+        "//common/init:init",
+        "//common/time:time",
+    ],
+)

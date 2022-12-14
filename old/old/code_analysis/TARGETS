@@ -1,0 +1,12 @@
+"""
+cpp_binary(
+    name = 'numbers',
+    headers = [],
+    srcs = [
+        "numbers.cpp",
+    ],
+    deps = [
+        "//experimental/njormrod/hanabi:hanabi_lib",
+    ],
+)
+"""

@@ -1,5 +1,0 @@
-$ experimental/njormrod/hanabi/run --ngames 1000000  // aug 29
-Average score: 24.9871 across 1000000 games, with 99.0771% perfect
-
-$ experimental/njormrod/hanabi/run --ngames 1000000 --seed 1000000 // aug 30
-Average score: 24.9874 across 1000000 games, with 99.0783% perfect

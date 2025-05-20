@@ -1,8 +1,0 @@
-Max score is 25. That's a win.
-
-To have 25 points at the end of the game with 4 players, there must be at most 13 cards in the discard pile: 25 cards on the table, 3-4 in each player's hand, none left in the deck, out of 50 cards in total.
-
-Some arrangements of the deck are strictly unwinnable. For example, if all the 1s are on the bottom, there must be at least 20 discards before the first 1 is drawn. These forced failures are rare - about 2M of this variety force a 14th discard, out of 1e56 deck permutations.
-
-Simpler failure cases arise when, for example, both white 2's are on the bottom.
-There is exactly one round of play left when the white 2 is played.

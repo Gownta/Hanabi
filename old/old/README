@@ -1,6 +1,0 @@
-GodState is a dumb representation of the game. Godly because it exposes all hands.
-View is an individual player's view of the game, a filter on GodState.
-Executor runs a game, asking Players to make choices and then updating the board (GodState and the Players).
-  There are two modes of play:
-    - Normal mode. It just runs.
-    - God Mode. The board is shown, and an omnipotent observer can change actions.

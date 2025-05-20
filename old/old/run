@@ -1,4 +1,0 @@
-#!/bin/bash
-
-buck-out/gen/experimental/njormrod/hanabi/hanabi "$@" 2>/tmp/hanabi_logs
-exit 0

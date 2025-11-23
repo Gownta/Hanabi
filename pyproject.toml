@@ -1,0 +1,9 @@
+[project]
+name = "hanabi"
+version = "0.1.0"
+description = "Hanabi engine"
+readme = "README.md"
+authors = [
+  { name = "Nicholas Ormrod", email = "nicholas.ormrod@gmail.com" },
+]
+requires-python = ">=3.9"

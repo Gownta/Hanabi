@@ -2,7 +2,7 @@
 
 import unittest
 from collections import Counter
-from src.repr import Color, Number, Card, Hand, Deck
+from src.repr import Color, Number, Card, Hand, Deck, GameState
 
 
 class TestColor(unittest.TestCase):
@@ -230,6 +230,166 @@ class TestDeck(unittest.TestCase):
         for _ in range(10):
             deck.draw()
         self.assertEqual(len(deck), 39)
+
+
+class TestGameState(unittest.TestCase):
+    """Test the GameState class"""
+
+    def test_game_creation_2_players(self):
+        """Test creating a game with 2 players"""
+        game = GameState(num_players=2, seed=42)
+        self.assertEqual(game.num_players, 2)
+        self.assertEqual(len(game.hands), 2)
+        self.assertEqual(len(game.hands[0].cards), 5)
+        self.assertEqual(len(game.hands[1].cards), 5)
+        self.assertEqual(len(game.deck), 40)  # 50 - 10 dealt
+
+    def test_game_creation_3_players(self):
+        """Test creating a game with 3 players"""
+        game = GameState(num_players=3, seed=42)
+        self.assertEqual(game.num_players, 3)
+        self.assertEqual(len(game.hands), 3)
+        for hand in game.hands:
+            self.assertEqual(len(hand.cards), 5)
+        self.assertEqual(len(game.deck), 35)  # 50 - 15 dealt
+
+    def test_game_creation_4_players(self):
+        """Test creating a game with 4 players"""
+        game = GameState(num_players=4, seed=42)
+        self.assertEqual(game.num_players, 4)
+        self.assertEqual(len(game.hands), 4)
+        for hand in game.hands:
+            self.assertEqual(len(hand.cards), 4)
+        self.assertEqual(len(game.deck), 34)  # 50 - 16 dealt
+
+    def test_game_creation_5_players(self):
+        """Test creating a game with 5 players"""
+        game = GameState(num_players=5, seed=42)
+        self.assertEqual(game.num_players, 5)
+        self.assertEqual(len(game.hands), 5)
+        for hand in game.hands:
+            self.assertEqual(len(hand.cards), 4)
+        self.assertEqual(len(game.deck), 30)  # 50 - 20 dealt
+
+    def test_game_creation_invalid_players(self):
+        """Test that invalid player counts raise ValueError"""
+        with self.assertRaises(ValueError):
+            GameState(num_players=1)
+        with self.assertRaises(ValueError):
+            GameState(num_players=6)
+        with self.assertRaises(ValueError):
+            GameState(num_players=0)
+
+    def test_initial_state(self):
+        """Test initial game state values"""
+        game = GameState(num_players=3, seed=42)
+        self.assertEqual(game.hints, 8)
+        self.assertEqual(game.lives, 3)
+        self.assertEqual(game.piles, [0, 0, 0, 0, 0])
+        self.assertEqual(game.discard_pile, [])
+        self.assertEqual(game.turns_left, -1)
+
+    def test_play_successful(self):
+        """Test successfully playing a card"""
+        game = GameState(num_players=2, seed=42)
+        card = Card(Color.RED, Number.ONE)
+
+        result = game.play(card)
+        self.assertTrue(result)
+        self.assertEqual(game.piles[Color.RED], 1)
+        self.assertEqual(len(game.discard_pile), 0)
+        self.assertEqual(game.lives, 3)
+
+    def test_play_sequence(self):
+        """Test playing a sequence of cards"""
+        game = GameState(num_players=2, seed=42)
+
+        # Play RED 1, 2, 3
+        self.assertTrue(game.play(Card(Color.RED, Number.ONE)))
+        self.assertEqual(game.piles[Color.RED], 1)
+
+        self.assertTrue(game.play(Card(Color.RED, Number.TWO)))
+        self.assertEqual(game.piles[Color.RED], 2)
+
+        self.assertTrue(game.play(Card(Color.RED, Number.THREE)))
+        self.assertEqual(game.piles[Color.RED], 3)
+
+    def test_play_wrong_card(self):
+        """Test playing a card that doesn't match"""
+        game = GameState(num_players=2, seed=42)
+
+        # Try to play RED 2 when pile is at 0
+        result = game.play(Card(Color.RED, Number.TWO))
+        self.assertFalse(result)
+        self.assertEqual(game.piles[Color.RED], 0)
+        self.assertEqual(len(game.discard_pile), 1)
+        self.assertEqual(game.discard_pile[0], Card(Color.RED, Number.TWO))
+        self.assertEqual(game.lives, 2)
+
+    def test_play_five_gives_hint(self):
+        """Test that playing a 5 gives a hint"""
+        game = GameState(num_players=2, seed=42)
+
+        # Play RED 1-5
+        game.play(Card(Color.RED, Number.ONE))
+        game.play(Card(Color.RED, Number.TWO))
+        game.play(Card(Color.RED, Number.THREE))
+        game.play(Card(Color.RED, Number.FOUR))
+
+        self.assertEqual(game.hints, 8)
+        game.play(Card(Color.RED, Number.FIVE))
+        self.assertEqual(game.hints, 8)  # Already at max, stays at 8
+
+    def test_play_five_gives_hint_when_not_max(self):
+        """Test that playing a 5 increases hints when not at max"""
+        game = GameState(num_players=2, seed=42)
+        game.hints = 5
+
+        # Play RED 1-5
+        game.play(Card(Color.RED, Number.ONE))
+        game.play(Card(Color.RED, Number.TWO))
+        game.play(Card(Color.RED, Number.THREE))
+        game.play(Card(Color.RED, Number.FOUR))
+        game.play(Card(Color.RED, Number.FIVE))
+
+        self.assertEqual(game.hints, 6)
+
+    def test_lives_and_game_over(self):
+        """Test that losing all lives ends the game"""
+        game = GameState(num_players=2, seed=42)
+
+        self.assertFalse(game.game_over())
+        self.assertEqual(game.turns_left, -1)
+
+        # Lose first life
+        game.play(Card(Color.RED, Number.TWO))
+        self.assertEqual(game.lives, 2)
+        self.assertFalse(game.game_over())
+
+        # Lose second life
+        game.play(Card(Color.RED, Number.THREE))
+        self.assertEqual(game.lives, 1)
+        self.assertFalse(game.game_over())
+
+        # Lose third life - game over
+        game.play(Card(Color.RED, Number.FOUR))
+        self.assertEqual(game.lives, 0)
+        self.assertEqual(game.turns_left, 0)
+        self.assertTrue(game.game_over())
+
+    def test_multiple_color_piles(self):
+        """Test playing cards to different color piles"""
+        game = GameState(num_players=2, seed=42)
+
+        game.play(Card(Color.RED, Number.ONE))
+        game.play(Card(Color.GREEN, Number.ONE))
+        game.play(Card(Color.BLUE, Number.ONE))
+
+        self.assertEqual(game.piles[Color.RED], 1)
+        self.assertEqual(game.piles[Color.GREEN], 1)
+        self.assertEqual(game.piles[Color.BLUE], 1)
+        self.assertEqual(game.piles[Color.WHITE], 0)
+        self.assertEqual(game.piles[Color.YELLOW], 0)
 
 
 if __name__ == "__main__":

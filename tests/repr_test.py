@@ -1,7 +1,8 @@
 """Unit tests for repr.py"""
 
 import unittest
-from src.repr import Color, Number, Card, Hand
+from collections import Counter
+from src.repr import Color, Number, Card, Hand, Deck
 
 
 class TestColor(unittest.TestCase):
@@ -134,6 +135,101 @@ class TestHand(unittest.TestCase):
         hand = Hand(cards=cards)
         expected = "Hand(cards=[Card(color=<Color.RED: 0>, number=<Number.ONE: 1>), Card(color=<Color.BLUE: 2>, number=<Number.TWO: 2>)])"
         self.assertEqual(repr(hand), expected)
+
+
+class TestDeck(unittest.TestCase):
+    """Test the Deck class"""
+
+    def test_deck_size(self):
+        """Test that a new deck has 50 cards"""
+        deck = Deck(seed=42)
+        self.assertEqual(len(deck), 50)
+
+    def test_deck_composition(self):
+        """
+        Test that deck has correct card distribution.
+
+        Per color: 3x1, 2x2, 2x3, 2x4, 1x5 (10 cards per color, 50 total)
+        """
+        deck = Deck(seed=42)
+        card_counts = Counter((card.color, card.number) for card in deck.cards)
+
+        for color in Color:
+            self.assertEqual(card_counts[(color, Number.ONE)], 3)
+            self.assertEqual(card_counts[(color, Number.TWO)], 2)
+            self.assertEqual(card_counts[(color, Number.THREE)], 2)
+            self.assertEqual(card_counts[(color, Number.FOUR)], 2)
+            self.assertEqual(card_counts[(color, Number.FIVE)], 1)
+
+    def test_deck_shuffled_with_seed(self):
+        """Test that decks with the same seed are shuffled identically"""
+        deck1 = Deck(seed=42)
+        deck2 = Deck(seed=42)
+
+        self.assertEqual(deck1.cards, deck2.cards)
+
+    def test_deck_shuffled_different_seeds(self):
+        """Test that decks with different seeds are shuffled differently"""
+        deck1 = Deck(seed=42)
+        deck2 = Deck(seed=123)
+
+        self.assertNotEqual(deck1.cards, deck2.cards)
+
+    def test_deck_shuffled_no_seed(self):
+        """Test that decks without seed are shuffled randomly"""
+        deck1 = Deck()
+        deck2 = Deck()
+
+        # Very unlikely to be the same with random shuffling
+        self.assertNotEqual(deck1.cards, deck2.cards)
+
+    def test_deck_draw(self):
+        """Test drawing cards from the deck"""
+        deck = Deck(seed=42)
+        initial_size = len(deck)
+
+        card = deck.draw()
+        self.assertIsNotNone(card)
+        self.assertIsInstance(card, Card)
+        self.assertEqual(len(deck), initial_size - 1)
+
+    def test_deck_draw_all_cards(self):
+        """Test drawing all cards from the deck"""
+        deck = Deck(seed=42)
+
+        cards_drawn = []
+        while len(deck) > 0:
+            card = deck.draw()
+            self.assertIsNotNone(card)
+            cards_drawn.append(card)
+
+        self.assertEqual(len(cards_drawn), 50)
+        self.assertEqual(len(deck), 0)
+
+    def test_deck_draw_when_empty(self):
+        """Test that drawing from an empty deck returns None"""
+        deck = Deck(seed=42)
+
+        # Draw all cards
+        while len(deck) > 0:
+            deck.draw()
+
+        # Try to draw from empty deck
+        card = deck.draw()
+        self.assertIsNone(card)
+        self.assertEqual(len(deck), 0)
+
+    def test_deck_len(self):
+        """Test that __len__ returns correct count"""
+        deck = Deck(seed=42)
+        self.assertEqual(len(deck), 50)
+
+        deck.draw()
+        self.assertEqual(len(deck), 49)
+
+        for _ in range(10):
+            deck.draw()
+        self.assertEqual(len(deck), 39)
 
 
 if __name__ == "__main__":

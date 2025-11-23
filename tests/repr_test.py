@@ -29,56 +29,21 @@ class TestNumber(unittest.TestCase):
 
 
 class TestCard(unittest.TestCase):
-    """Test the Card class"""
+    """Test the Card dataclass"""
 
     def test_card_creation(self):
         """Test creating a card with color and number"""
         card = Card(Color.RED, Number.ONE)
-        self.assertEqual(card.get_color(), Color.RED)
-        self.assertEqual(card.get_number(), Number.ONE)
-
-    def test_card_value_formula(self):
-        """Test that card value follows color * 6 + number formula"""
-        card = Card(Color.RED, Number.ONE)
-        self.assertEqual(card.value(), 0 * 6 + 1)  # 1
-
-        card = Card(Color.GREEN, Number.THREE)
-        self.assertEqual(card.value(), 1 * 6 + 3)  # 9
-
-        card = Card(Color.YELLOW, Number.FIVE)
-        self.assertEqual(card.value(), 4 * 6 + 5)  # 29
-
-    def test_get_color(self):
-        """Test getting the color from a card"""
-        card = Card(Color.BLUE, Number.TWO)
-        self.assertEqual(card.get_color(), Color.BLUE)
-
-    def test_get_number(self):
-        """Test getting the number from a card"""
-        card = Card(Color.WHITE, Number.FOUR)
-        self.assertEqual(card.get_number(), Number.FOUR)
-
-    def test_card_from_value(self):
-        """Test creating a card from its integer value"""
-        card = Card.from_value(1 * 6 + 3)  # GREEN THREE
-        self.assertEqual(card.get_color(), Color.GREEN)
-        self.assertEqual(card.get_number(), Number.THREE)
-
-    def test_card_roundtrip(self):
-        """Test that creating a card and converting to/from value works"""
-        original = Card(Color.YELLOW, Number.TWO)
-        value = original.value()
-        recreated = Card.from_value(value)
-        self.assertEqual(original, recreated)
+        self.assertEqual(card.color, Color.RED)
+        self.assertEqual(card.number, Number.ONE)
 
     def test_all_combinations(self):
         """Test all valid color and number combinations"""
         for color in Color:
             for number in Number:
                 card = Card(color, number)
-                self.assertEqual(card.get_color(), color)
-                self.assertEqual(card.get_number(), number)
-                self.assertEqual(card.value(), color * 6 + number)
+                self.assertEqual(card.color, color)
+                self.assertEqual(card.number, number)
 
     def test_card_equality(self):
         """Test card equality comparison"""
@@ -97,12 +62,20 @@ class TestCard(unittest.TestCase):
 
         self.assertEqual(hash(card1), hash(card2))
         card_set = {card1, card2, card3}
-        self.assertEqual(len(card_set), 2)  # card1 and card2 are the same
+        self.assertEqual(len(card_set), 2)
 
     def test_card_repr(self):
         """Test card string representation"""
         card = Card(Color.RED, Number.FIVE)
-        self.assertEqual(repr(card), "Card(RED, FIVE)")
+        self.assertEqual(
+            repr(card), "Card(color=<Color.RED: 0>, number=<Number.FIVE: 5>)"
+        )
+
+    def test_card_immutable(self):
+        """Test that cards are immutable (frozen dataclass)"""
+        card = Card(Color.RED, Number.ONE)
+        with self.assertRaises(Exception):
+            card.color = Color.BLUE
 
 
 if __name__ == "__main__":

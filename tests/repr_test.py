@@ -1,7 +1,7 @@
 """Unit tests for repr.py"""
 
 import unittest
-from src.repr import Color, Number, Card
+from src.repr import Color, Number, Card, Hand
 
 
 class TestColor(unittest.TestCase):
@@ -76,6 +76,64 @@ class TestCard(unittest.TestCase):
         card = Card(Color.RED, Number.ONE)
         with self.assertRaises(Exception):
             card.color = Color.BLUE
+
+
+class TestHand(unittest.TestCase):
+    """Test the Hand dataclass"""
+
+    def test_hand_creation_empty(self):
+        """Test creating an empty hand"""
+        hand = Hand(cards=[])
+        self.assertEqual(len(hand.cards), 0)
+
+    def test_hand_creation_with_cards(self):
+        """Test creating a hand with cards"""
+        cards = [
+            Card(Color.RED, Number.ONE),
+            Card(Color.BLUE, Number.TWO),
+            Card(Color.GREEN, Number.THREE),
+        ]
+        hand = Hand(cards=cards)
+        self.assertEqual(len(hand.cards), 3)
+        self.assertEqual(hand.cards[0], Card(Color.RED, Number.ONE))
+        self.assertEqual(hand.cards[1], Card(Color.BLUE, Number.TWO))
+        self.assertEqual(hand.cards[2], Card(Color.GREEN, Number.THREE))
+
+    def test_hand_mutable(self):
+        """Test that hands are mutable (can add/remove cards)"""
+        hand = Hand(cards=[])
+        card1 = Card(Color.RED, Number.ONE)
+        card2 = Card(Color.BLUE, Number.TWO)
+
+        hand.cards.append(card1)
+        self.assertEqual(len(hand.cards), 1)
+
+        hand.cards.append(card2)
+        self.assertEqual(len(hand.cards), 2)
+
+        hand.cards.remove(card1)
+        self.assertEqual(len(hand.cards), 1)
+        self.assertEqual(hand.cards[0], card2)
+
+    def test_hand_equality(self):
+        """Test hand equality comparison"""
+        cards1 = [Card(Color.RED, Number.ONE), Card(Color.BLUE, Number.TWO)]
+        cards2 = [Card(Color.RED, Number.ONE), Card(Color.BLUE, Number.TWO)]
+        cards3 = [Card(Color.RED, Number.ONE)]
+
+        hand1 = Hand(cards=cards1)
+        hand2 = Hand(cards=cards2)
+        hand3 = Hand(cards=cards3)
+
+        self.assertEqual(hand1, hand2)
+        self.assertNotEqual(hand1, hand3)
+
+    def test_hand_repr(self):
+        """Test hand string representation"""
+        cards = [Card(Color.RED, Number.ONE), Card(Color.BLUE, Number.TWO)]
+        hand = Hand(cards=cards)
+        expected = "Hand(cards=[Card(color=<Color.RED: 0>, number=<Number.ONE: 1>), Card(color=<Color.BLUE: 2>, number=<Number.TWO: 2>)])"
+        self.assertEqual(repr(hand), expected)
 
 
 if __name__ == "__main__":

@@ -32,3 +32,10 @@ class Card:
 
     color: Color
     number: Number
+
+
+@dataclass
+class Hand:
+    """Represents a hand of Hanabi cards"""
+
+    cards: list[Card]
